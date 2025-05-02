@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    ports:
+      - "5100:5100"
+    depends_on:
+      - backend
+      - ws
+    environment:
+      - VITE_APP_WS_URL=${VITE_APP_WS_URL}
+      - VITE_APP_BACKEND_URL=${VITE_APP_BACKEND_URL}
+    restart: always
+    networks:
+      - chess-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - AUTH_REDIRECT_URL=${AUTH_REDIRECT_URL}
+    restart: always
+    networks:
+      - chess-network
+
+  ws:
+    build:
+      context: .
+      dockerfile: apps/ws/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=${NODE_ENV}
+    restart: always
+    networks:
+      - chess-network
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-chess}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - chess-network
+
+volumes:
+  postgres-data:
+
+networks:
+  chess-network:
+    driver: bridge 
