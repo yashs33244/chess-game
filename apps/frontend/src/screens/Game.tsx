@@ -91,8 +91,8 @@ export const Game = () => {
   }, [userSelectedMoveIndex]);
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/login';
+    if (user === null) {
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
   }, [user]);
 
@@ -313,7 +313,7 @@ export const Game = () => {
                   {started && (
                     <div className="mt-4 flex justify-between">
                       <UserAvatar gameMetadata={gameMetadata} self />
-                      {getTimer(user.id === gameMetadata?.blackPlayer?.id ? player2TimeConsumed : player1TimeConsumed)}
+                      {getTimer(user.id === gameMetadata?.whitePlayer?.id ? player1TimeConsumed : player2TimeConsumed)}
                     </div>
                   )}
                 </div>
@@ -329,20 +329,23 @@ export const Game = () => {
                       </div>
                       <ShareGame gameId={gameID} />
                     </div>
+                  ) : gameId === 'random' ? (
+                    <Button
+                      onClick={() => {
+                        socket.send(
+                          JSON.stringify({
+                            type: INIT_GAME,
+                          })
+                        );
+                      }}
+                    >
+                      Play
+                    </Button>
                   ) : (
-                    gameId === 'random' && (
-                      <Button
-                        onClick={() => {
-                          socket.send(
-                            JSON.stringify({
-                              type: INIT_GAME,
-                            })
-                          );
-                        }}
-                      >
-                        Play
-                      </Button>
-                    )
+                    <div className="flex flex-col items-center space-y-4 text-white">
+                      <img src={connecting} alt="Connecting..." className="w-24 h-24" />
+                      <p className="text-lg">Joining game...</p>
+                    </div>
                   )}
                 </div>
               ) : (

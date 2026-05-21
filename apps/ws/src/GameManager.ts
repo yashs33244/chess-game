@@ -144,6 +144,9 @@ export class GameManager {
         
         if (availableGame && !availableGame.player2UserId) {
           socketManager.addUser(user, availableGame.gameId);
+          if (this.pendingGameId === availableGame.gameId) {
+            this.pendingGameId = null;
+          }
           await availableGame.updateSecondPlayer(user.userId);
           return;
         }

@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/backend/Dockerfile
+          push: false
+          tags: chess-backend:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build ws
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/ws/Dockerfile
+          push: false
+          tags: chess-ws:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/frontend/Dockerfile
+          push: false
+          tags: chess-frontend:test
+          build-args: |
+            VITE_APP_WS_URL=wss://ws-chess.itsyash.space
+            VITE_APP_BACKEND_URL=https://api-chess.itsyash.space
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

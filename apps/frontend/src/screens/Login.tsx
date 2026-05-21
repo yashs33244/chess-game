@@ -5,17 +5,28 @@ import { userAtom } from '@repo/store/userAtom';
 
 const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL ?? 'http://localhost:3000';
 
+const getRedirectPath = () => {
+  const params = new URLSearchParams(window.location.search);
+  const redirect = params.get('redirect');
+  return redirect && redirect.startsWith('/') ? redirect : '/game/random';
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const guestName = useRef<HTMLInputElement>(null);
   const [_, setUser] = useRecoilState(userAtom);
 
+  const redirectPath = getRedirectPath();
+
   const google = () => {
-    window.open(`${BACKEND_URL}/auth/google`, '_self');
+    // Preserve the redirect param through the OAuth flow via state
+    const redirectParam = redirectPath !== '/game/random' ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
+    window.open(`${BACKEND_URL}/auth/google${redirectParam}`, '_self');
   };
 
   const github = () => {
-    window.open(`${BACKEND_URL}/auth/github`, '_self');
+    const redirectParam = redirectPath !== '/game/random' ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
+    window.open(`${BACKEND_URL}/auth/github${redirectParam}`, '_self');
   };
 
   const loginAsGuest = async () => {
@@ -31,7 +42,7 @@ const Login = () => {
     });
     const user = await response.json();
     setUser(user);
-    navigate('/game/random');
+    navigate(redirectPath);
   };
 
   return (
