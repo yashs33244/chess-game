@@ -12,6 +12,8 @@ import { COOKIE_MAX_AGE } from './consts';
 const app = express();
 
 dotenv.config();
+// Trust Cloudflare / reverse proxy so X-Forwarded-Proto is used for redirect URIs and secure cookies
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -19,7 +21,7 @@ app.use(
     secret: process.env.COOKIE_SECRET || 'keyboard cat',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: COOKIE_MAX_AGE },
+    cookie: { secure: process.env.NODE_ENV === 'production', maxAge: COOKIE_MAX_AGE },
   }),
 );
 

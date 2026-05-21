@@ -21,6 +21,10 @@ const GITHUB_CLIENT_ID =
 const GITHUB_CLIENT_SECRET =
   process.env.GITHUB_CLIENT_SECRET || 'your_github_client_secret';
 
+// Must be an absolute URL so it doesn't get resolved against the internal http:// request
+const BACKEND_PUBLIC_URL =
+  process.env.BACKEND_PUBLIC_URL || 'http://localhost:3000';
+
 export function initPassport() {
   if (
     !GOOGLE_CLIENT_ID ||
@@ -38,7 +42,7 @@ export function initPassport() {
       {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: '/auth/google/callback',
+        callbackURL: `${BACKEND_PUBLIC_URL}/auth/google/callback`,
       },
       async function (
         accessToken: string,
@@ -70,7 +74,7 @@ export function initPassport() {
       {
         clientID: GITHUB_CLIENT_ID,
         clientSecret: GITHUB_CLIENT_SECRET,
-        callbackURL: '/auth/github/callback',
+        callbackURL: `${BACKEND_PUBLIC_URL}/auth/github/callback`,
       },
       async function (
         accessToken: string,

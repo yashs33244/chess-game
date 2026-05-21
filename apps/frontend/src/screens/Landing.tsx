@@ -14,13 +14,15 @@ export const Landing = () => {
   return (
     <>
       <div className="max-w-full mt-0">
-        <div className="flex flex-col md:flex-row w-full gap-x-16 items-center">
-          <img
-            className="rounded-xl w-full h-[600px] object-cover hidden md:block shadow-2xl"
-            src={boardSrc}
-            alt="chess-board"
-          />
-          <div className="flex items-center justify-center w-full md:w-auto">
+        <div className="flex flex-col md:flex-row w-full gap-x-12 items-center">
+          <div className="hidden md:flex flex-1 items-center justify-center">
+            <img
+              className="rounded-xl w-full max-w-[600px] aspect-square object-contain shadow-2xl"
+              src={boardSrc}
+              alt="chess-board"
+            />
+          </div>
+          <div className="flex items-center justify-center w-full md:w-auto shrink-0">
             <PlayCard />
           </div>
         </div>
