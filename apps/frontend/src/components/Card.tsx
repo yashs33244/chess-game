@@ -1,12 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import chessIcon from '../../public/chess.png';
 import computerIcon from '../../public/computer.png';
 import lightningIcon from '../../public/lightning-bolt.png';
 import friendIcon from '../../public/friendship.png';
@@ -14,90 +6,62 @@ import tournamentIcon from '../../public/trophy.png';
 import variantsIcon from '../../public/strategy.png';
 import GameModeComponent from './GameModeComponent';
 
+const makeIcon = (src: string, alt: string) => (
+  <img src={src} className="h-6 w-6" alt={alt} />
+);
+
 export function PlayCard() {
+  const navigate = useNavigate();
+
   const gameModeData = [
     {
-      icon: (
-        <img
-          src={lightningIcon}
-          className="inline-block mt-1 h-7 w-7"
-          alt="online"
-        />
-      ),
+      icon: makeIcon(lightningIcon, 'online'),
       title: 'Play Online',
-      description: 'Play vs a Person of Similar Skill',
-      onClick: () => {
-        navigate('/game/random');
-      },
+      description: 'Matched against a player of similar skill',
+      onClick: () => navigate('/game/random'),
       disabled: false,
     },
     {
-      icon: (
-        <img
-          src={computerIcon}
-          className="inline-block mt-1 h-7 w-7"
-          alt="computer"
-        />
-      ),
-      title: 'Computer',
+      icon: makeIcon(computerIcon, 'computer'),
+      title: 'vs Computer',
       description: 'Challenge a bot from easy to master',
       disabled: true,
     },
     {
-      icon: (
-        <img
-          src={friendIcon}
-          className="inline-block mt-1 h-7 w-7"
-          alt="friend"
-        />
-      ),
+      icon: makeIcon(friendIcon, 'friend'),
       title: 'Play a Friend',
-      description: 'Invite a Friend to a game of Chess',
+      description: 'Invite a friend to a private game',
       disabled: true,
     },
     {
-      icon: (
-        <img
-          src={tournamentIcon}
-          className="inline-block mt-1 h-7 w-7"
-          alt="tournament"
-        />
-      ),
+      icon: makeIcon(tournamentIcon, 'tournament'),
       title: 'Tournaments',
-      description: 'Join an Arena where anyone can Win',
+      description: 'Join an arena where anyone can win',
       disabled: true,
+      badge: 'SOON',
     },
     {
-      icon: (
-        <img
-          src={variantsIcon}
-          className="inline-block mt-1 h-7 w-7"
-          alt="variants"
-        />
-      ),
+      icon: makeIcon(variantsIcon, 'variants'),
       title: 'Chess Variants',
-      description: 'Find Fun New ways to play chess',
+      description: 'Explore fun new ways to play chess',
       disabled: true,
     },
   ];
 
-  const navigate = useNavigate();
   return (
-    <Card className="bg-transparent border-none">
-      <CardHeader className="pb-3 text-center">
-        <CardTitle className="font-semibold tracking-wide flex flex-col items-center justify-center">
-          <p className='text-white'>
-            Play <span className="text-green-600 font-bold pt-1">Chess</span>
-          </p>
-          <img className="pl-1 w-1/2 mt-4" src={chessIcon} alt="chess" />
-        </CardTitle>
-        <CardDescription />
-      </CardHeader>
-      <CardContent className="grid gap-2 cursor-pointer mt-1">
-        {gameModeData.map((data) => {
-          return <GameModeComponent {...data} />;
-        })}
-      </CardContent>
-    </Card>
+    <div className="w-full max-w-sm mx-auto">
+      <div className="mb-6 text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight text-white">
+          Rook<span className="text-green-500">House</span>
+        </h1>
+        <p className="mt-1 text-sm text-slate-400">Your arena for chess</p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {gameModeData.map((data) => (
+          <GameModeComponent key={data.title} {...data} />
+        ))}
+      </div>
+    </div>
   );
 }
